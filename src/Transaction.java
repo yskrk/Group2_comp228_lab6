@@ -1,4 +1,4 @@
-public class Transaction extends Thread implements Runnable{
+public class Transaction implements Runnable {
 
     private Account account;
     private String transactionType;

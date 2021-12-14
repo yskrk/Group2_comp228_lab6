@@ -1,41 +1,92 @@
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class AccountTest {
 
     public static void main(String[] args) {
+        String name = "";
+        double balance = 110.0;
+        String transactionType = "";
+        double amount = 0.0;
+        Boolean isStayTransaction = true;
+        Boolean isValidTransaction = false;
+//        ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+        LinkedList<Transaction> transactions = new LinkedList<Transaction>();
+        Scanner scanner = new Scanner(System.in);
 
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+        // account name here
+        System.out.print("Input account name: ");
+        name = scanner.next();
 
-        Account account1 = new Account(1001, "John Smith", 500);
-        executor.execute(account1);
+        // current balance here
+        System.out.print("Input account's balance: ");
+        try {
+            balance = Double.parseDouble(scanner.next());
 
-        Account account2 = new Account(1234, "Akino Kashima", 800);
-        executor.execute(account2);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid value was inputted. balance is set as " + balance);
+        }
 
-        Account account3 = new Account(2871, "Yusuke Kuroki", 200);
-        executor.execute(account3);
+        // create account
+        Account account = new Account(name, balance);
 
-        Account account4 = new Account(3571, "Katie Monahan", 300);
-        executor.execute(account4);
+        System.out.println("------------------------------");
 
+        // loop while user enter 'execute'
+        while (isStayTransaction) {
+            System.out.print("Enter deposit, withdraw or execute: ");
+            transactionType = scanner.next();
 
-        Transaction transaction1 = new Transaction(account1,"withdraw", 800 );
-        executor.execute(transaction1);
+            switch (transactionType.toLowerCase()) {
+                case "deposit":
+                case "withdraw":
+                    System.out.print("Enter amount of " + transactionType.toLowerCase() + ": ");
+                    try {
+                        amount = Double.parseDouble(scanner.next());
+                        isValidTransaction = true;
 
-        Transaction transaction2 = new Transaction(account1,"deposit", 0);
-        executor.execute(transaction2);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please enter valid value.");
+                        isValidTransaction = false;
+                    }
+                    break;
+                case "execute":
+                    System.out.println("Execute transactions...");
+                    isStayTransaction = !isStayTransaction;
+                    break;
+                default :
+                    System.out.println("Unknown transaction.");
+            }
 
-        Transaction transaction3 = new Transaction(account1,"withdraw", 500);
-        executor.execute(transaction3);
+            if (isStayTransaction && isValidTransaction) {
+                // create transaction
+                Transaction transaction = new Transaction(account, transactionType, amount);
 
-        Transaction transaction4 = new Transaction(account1,"deposit", 700);
-        executor.execute(transaction4);
+                // save to arraylist (or linkedlist)
+                transactions.add(transaction);
 
+                isValidTransaction = false;
+            }
+        }
 
+        System.out.println("------------------------------");
 
+        // show result on output
+        ExecutorService es = Executors.newFixedThreadPool(transactions.size());
+
+        for (Transaction t : transactions) {
+            t.run();
+        }
+
+        System.out.println("------------------------------");
+        System.out.println("Finish transactions Thank you " + name + "!");
     }
-
 }
 
 

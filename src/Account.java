@@ -1,18 +1,16 @@
-public class Account implements Runnable {
+public class Account extends Thread {
 
-    private int accountNumber;
     private String accountName;
     private double balance;
 
-    public Account(int accountNumber, String accountName, double balance) {
-        this.accountNumber = accountNumber;
+    public Account(String accountName, double balance) {
         this.accountName = accountName;
         this.balance = balance;
     }
 
     // Withdraw transaction
     public synchronized void withdraw(double withdrawAmount) {
-        System.out.println("Account Number : " + accountNumber + "\nAccount Name : " + accountName + "\nWithdrawal Amount : $" + withdrawAmount);
+        System.out.println("Account Name : " + accountName + "\nWithdrawal Amount : $" + withdrawAmount);
         try {
             if (balance >= withdrawAmount) {
                 try {
@@ -33,7 +31,7 @@ public class Account implements Runnable {
 
     // Deposit transaction
     public synchronized void deposit(double depositAmount) {
-        System.out.println("Account Number : " + accountNumber + "\nAccount Name : $" + accountName + "\nDeposit Amount : $" + depositAmount);
+        System.out.println("Account Name : $" + accountName + "\nDeposit Amount : $" + depositAmount);
         try {
             if (depositAmount > 0) {
                 try {
